@@ -1,6 +1,9 @@
 package model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class TicketModel {
     private static final int MainBerth = 3;

@@ -9,7 +9,8 @@ public class MainView {
         System.out.println("\nWelcome to Railway Ticket Booking System!");
         System.out.println("1. Create User");
         System.out.println("2. Login User");
-        System.out.println("3. Exit");
+        System.out.println("3. Admin Login");
+        System.out.println("4. Exit");
         System.out.print("Enter your choice: ");
         return scanner.nextInt();
     }

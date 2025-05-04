@@ -44,4 +44,24 @@ public class DatabaseModel {
         }
         return false;
     }
+
+    public static boolean adminUser(String email, String password) {
+        String query = "SELECT Password FROM AdminTable WHERE Email = ?";
+
+        try (Connection connect = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement preparedStatement = connect.prepareStatement(query)) {
+
+            preparedStatement.setString(1, email);
+            ResultSet result = preparedStatement.executeQuery();
+
+            if (result.next() && result.getString("Password").equals(password)) {
+                System.out.println("Login Successful!");
+                return true;
+            }
+            System.out.println("Invalid Email or Password!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

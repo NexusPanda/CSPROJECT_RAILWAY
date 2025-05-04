@@ -1,7 +1,8 @@
 package controller;
 
-import model.*;
-import java.util.*;
+import model.DatabaseModel;
+import model.TicketModel;
+import model.UserModel;
 import view.MainView;
 
 public class MainController {
@@ -33,6 +34,13 @@ public class MainController {
                     break;
 
                 case 3:
+                    String adminEmail = MainView.getUserInput("Enter the Email: ");
+                    String adminPassword = MainView.getUserInput("Enter the Password: ");
+                    if(DatabaseModel.adminUser(adminEmail, adminPassword)) {
+                        ticketBookingMenu();
+                    }
+
+                case 4:
                     MainView.showMessage("Exiting... Thank you!");
                     return;
 
