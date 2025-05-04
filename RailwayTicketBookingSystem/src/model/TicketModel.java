@@ -1,60 +1,73 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.sql.*;
 
 public class TicketModel {
-    private static final int MainBerth = 3;
-    private static final int MainRac = 6;
-    private static final int MainWaitingList = 10;
-
-    private static int availableBerth = MainBerth;
-    private static int availableRac = MainRac;
-    private static int availableWaitingList = MainWaitingList;
-
-    private static List<TicketModel> berth = new ArrayList<>();
-    private static Queue<TicketModel> rac = new LinkedList<>();
-    private static Queue<TicketModel> waitingList = new LinkedList<>();
-
-    private String name;
-    private int age;
-    private char preference;
-
-    public TicketModel(String name, int age, char preference) {
-        this.name = name;
-        this.age = age;
-        this.preference = preference;
-    }
+    static final String URL = "jdbc:postgresql://localhost:5434/postgres";
+    static final String USER = "postgres";
+    static final String PASS = "JAVA";
 
     public static boolean bookTicket(String name, int age, char preference) {
-        TicketModel user = new TicketModel(name, age, preference);
-        
-        if (availableBerth > 0) {
-            berth.add(user);
-            availableBerth--;
-            System.out.println("Ticket Confirmed for " + name);
-            return true;
-        } else if (availableRac > 0) {
-            rac.add(user);
-            availableRac--;
-            System.out.println("Ticket added to RAC for " + name);
-            return true;
-        } else if (availableWaitingList > 0) {
-            waitingList.add(user);
-            availableWaitingList--;
-            System.out.println("Ticket added to Waiting List for " + name);
-            return true;
-        } else {
-            System.out.println("No Tickets Available for " + name);
-            return false;
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASS)) {
+            String fetchQuery = "SELECT * FROM SeatAvailability WHERE id = 1";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(fetchQuery);
+
+            if (rs.next()) {
+                int berth = rs.getInt("berth_available");
+                int rac = rs.getInt("rac_available");
+                int waiting = rs.getInt("waiting_list_available");
+
+                String status = null;
+                String updateQuery = null;
+
+                if (berth > 0) {
+                    status = "Confirmed";
+                    updateQuery = "UPDATE SeatAvailability SET berth_available = berth_available - 1 WHERE id = 1";
+                } else if (rac > 0) {
+                    status = "RAC";
+                    updateQuery = "UPDATE SeatAvailability SET rac_available = rac_available - 1 WHERE id = 1";
+                } else if (waiting > 0) {
+                    status = "Waiting";
+                    updateQuery = "UPDATE SeatAvailability SET waiting_list_available = waiting_list_available - 1 WHERE id = 1";
+                } else {
+                    System.out.println("No Tickets Available for " + name);
+                    return false;
+                }
+
+                stmt.executeUpdate(updateQuery);
+
+                String insertQuery = "INSERT INTO Tickets (name, age, preference, status) VALUES (?, ?, ?, ?)";
+                PreparedStatement pstmt = conn.prepareStatement(insertQuery);
+                pstmt.setString(1, name);
+                pstmt.setInt(2, age);
+                pstmt.setString(3, String.valueOf(preference));
+                pstmt.setString(4, status);
+
+                pstmt.executeUpdate();
+
+                System.out.println("Ticket " + status + " for " + name);
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
     public static void showAvailableTickets() {
-        System.out.println("Available Berth: " + availableBerth);
-        System.out.println("Available RAC: " + availableRac);
-        System.out.println("Available Waiting List: " + availableWaitingList);
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASS)) {
+            String query = "SELECT * FROM SeatAvailability WHERE id = 1";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            if (rs.next()) {
+                System.out.println("Available Berth: " + rs.getInt("berth_available"));
+                System.out.println("Available RAC: " + rs.getInt("rac_available"));
+                System.out.println("Available Waiting List: " + rs.getInt("waiting_list_available"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -37,8 +37,12 @@ public class MainController {
                     String adminEmail = MainView.getUserInput("Enter the Email: ");
                     String adminPassword = MainView.getUserInput("Enter the Password: ");
                     if(DatabaseModel.adminUser(adminEmail, adminPassword)) {
-                        ticketBookingMenu();
+                        adminMenu();
                     }
+                    else{
+                        MainView.showMessage("Invalid Admin credentials!");
+                    }
+                    break;
 
                 case 4:
                     MainView.showMessage("Exiting... Thank you!");
@@ -76,4 +80,74 @@ public class MainController {
             }
         }
     }
+
+    private static void adminMenu() {
+        while (true) {
+            int choice = MainView.getIntInput(
+                    "\n===== Admin Panel =====\n"
+                            + "1. Add New Train\n"
+                            + "2. View All Trains\n"
+                            + "3. Update Train Details\n"
+                            + "4. Delete Train\n"
+                            + "5. View All Bookings\n"
+                            + "6. Search Booking by PNR\n"
+                            + "7. Cancel a Booking\n"
+                            + "8. View All Users\n"
+                            + "9. View User's Bookings\n"
+                            + "10. Delete User\n"
+                            + "11. Logout\n"
+                            + "Enter your choice: "
+            );
+
+            switch (choice) {
+                case 1:
+                    // Call model method to add a train
+                    break;
+
+                case 2:
+                    // Call method to view all trains
+                    break;
+
+                case 3:
+                    // Call method to update train details
+                    break;
+
+                case 4:
+                    // Call method to delete a train
+                    break;
+
+                case 5:
+                    // Call method to view all bookings
+                    break;
+
+                case 6:
+                    // Call method to search booking by PNR
+                    break;
+
+                case 7:
+                    // Cancel a booking
+                    break;
+
+                case 8:
+                    // View all users
+                    break;
+
+                case 9:
+                    // View bookings of a specific user
+                    break;
+
+                case 10:
+                    // Delete a user
+                    break;
+
+                case 11:
+                    MainView.showMessage("Admin Logged Out!");
+                    return;
+
+                default:
+                    MainView.showMessage("Invalid choice.");
+            }
+        }
+    }
+
 }

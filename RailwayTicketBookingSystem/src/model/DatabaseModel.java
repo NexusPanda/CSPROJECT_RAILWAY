@@ -46,7 +46,7 @@ public class DatabaseModel {
     }
 
     public static boolean adminUser(String email, String password) {
-        String query = "SELECT Password FROM AdminTable WHERE Email = ?";
+        String query = "SELECT Password FROM admintable WHERE Email = ?";
 
         try (Connection connect = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement preparedStatement = connect.prepareStatement(query)) {
