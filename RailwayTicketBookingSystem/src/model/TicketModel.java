@@ -55,6 +55,40 @@ public class TicketModel {
         return false;
     }
 
+    public static void resetSeats() {
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASS)) {
+            String update = "UPDATE SeatAvailability SET berth_available = 3, rac_available = 6, waiting_list_available = 10 WHERE id = 1";
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(update);
+
+            String deleteTickets = "DELETE FROM Tickets";
+            stmt.executeUpdate(deleteTickets);
+
+            System.out.println("Seat counts reset and all tickets cleared!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void showAllBookedTickets() {
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASS)) {
+            String query = "SELECT * FROM Tickets";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            System.out.println("\n--- All Booked Tickets ---");
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") +
+                        ", Name: " + rs.getString("name") +
+                        ", Age: " + rs.getInt("age") +
+                        ", Preference: " + rs.getString("preference") +
+                        ", Status: " + rs.getString("status"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void showAvailableTickets() {
         try (Connection conn = DriverManager.getConnection(URL, USER, PASS)) {
             String query = "SELECT * FROM SeatAvailability WHERE id = 1";

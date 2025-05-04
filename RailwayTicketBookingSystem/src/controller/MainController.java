@@ -56,14 +56,17 @@ public class MainController {
 
     private static void ticketBookingMenu() {
         while (true) {
-            int choice = MainView.getIntInput("\n1. Book Ticket\n2. View Available Tickets\n3. Logout\nEnter choice: ");
+            int choice = MainView.getIntInput(
+                    "\n1. Book Ticket" +
+                    "\n2. View Available Tickets" +
+                    "\n3. Logout" +
+                    "\nEnter choice: ");
 
             switch (choice) {
                 case 1:
                     String name = MainView.getUserInput("Enter Name: ");
                     int age = MainView.getIntInput("Enter Age: ");
                     char preference = MainView.getUserInput("Enter Preference (L/M/U): ").charAt(0);
-                    
                     TicketModel.bookTicket(name, age, preference);
                     break;
 
@@ -84,70 +87,29 @@ public class MainController {
     private static void adminMenu() {
         while (true) {
             int choice = MainView.getIntInput(
-                    "\n===== Admin Panel =====\n"
-                            + "1. Add New Train\n"
-                            + "2. View All Trains\n"
-                            + "3. Update Train Details\n"
-                            + "4. Delete Train\n"
-                            + "5. View All Bookings\n"
-                            + "6. Search Booking by PNR\n"
-                            + "7. Cancel a Booking\n"
-                            + "8. View All Users\n"
-                            + "9. View User's Bookings\n"
-                            + "10. Delete User\n"
-                            + "11. Logout\n"
-                            + "Enter your choice: "
-            );
+                    "\n--- Admin Menu ---" +
+                    "\n1. View All Booked Tickets" +
+                    "\n2. View Available Seats" +
+                    "\n3. Reset Seats & Tickets" +
+                    "\n4. Logout" +
+                    "\nEnter choice: ");
 
             switch (choice) {
                 case 1:
-                    // Call model method to add a train
+                    TicketModel.showAllBookedTickets();
                     break;
-
                 case 2:
-                    // Call method to view all trains
+                    TicketModel.showAvailableTickets();
                     break;
-
                 case 3:
-                    // Call method to update train details
+                    TicketModel.resetSeats();
                     break;
-
                 case 4:
-                    // Call method to delete a train
-                    break;
-
-                case 5:
-                    // Call method to view all bookings
-                    break;
-
-                case 6:
-                    // Call method to search booking by PNR
-                    break;
-
-                case 7:
-                    // Cancel a booking
-                    break;
-
-                case 8:
-                    // View all users
-                    break;
-
-                case 9:
-                    // View bookings of a specific user
-                    break;
-
-                case 10:
-                    // Delete a user
-                    break;
-
-                case 11:
-                    MainView.showMessage("Admin Logged Out!");
+                    System.out.println("Admin logged out.");
                     return;
-
                 default:
-                    MainView.showMessage("Invalid choice.");
+                    System.out.println("Invalid choice.");
             }
         }
     }
-
 }
