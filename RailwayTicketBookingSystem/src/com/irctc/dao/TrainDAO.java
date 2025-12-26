@@ -1,9 +1,11 @@
 package com.irctc.dao;
 
-import com.irctc.model.Train;
-import java.util.List;
+import java.sql.ResultSet;
 
 public interface TrainDAO {
-    List<Train> searchTrains(String source, String destination);
-    void reduceSeat(int trainId);
+    ResultSet searchTrain(String source, String destination);
+    int[] getSeats(int trainId);
+    void reduceSeat(int trainId, String type);
+    boolean isChartPrepared(int trainId);
+    void prepareChart(int trainId);
 }

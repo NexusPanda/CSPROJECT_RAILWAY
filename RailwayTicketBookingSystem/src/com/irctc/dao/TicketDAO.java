@@ -1,7 +1,9 @@
 package com.irctc.dao;
 
-import com.irctc.model.Ticket;
-
 public interface TicketDAO {
-    void bookTicket(Ticket ticket);
+    void bookTicket(int userId, int trainId, String status);
+    int cancelTicket(int pnr);
+    int getNextRAC(int trainId);
+    int getNextWL(int trainId);
+    void updateStatus(int pnr, String status);
 }
