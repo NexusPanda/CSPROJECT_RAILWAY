@@ -1,59 +1,49 @@
 package com.irctc.service;
 
-import com.irctc.dao.*;
-import com.irctc.dao.impl.*;
+import com.irctc.dao.TicketDAO;
+import com.irctc.dao.TrainDAO;
+import com.irctc.dao.impl.TicketDAOImpl;
+import com.irctc.dao.impl.TrainDAOImpl;
+import com.irctc.model.Ticket;
+import com.irctc.model.Train;
 
 public class BookingService {
 
-    TrainDAO trainDAO = new TrainDAOImpl();
-    TicketDAO ticketDAO = new TicketDAOImpl();
+    private TicketDAO ticketDAO = new TicketDAOImpl();
+    private TrainDAO trainDAO = new TrainDAOImpl();
 
-    public void book(int userId, int trainId) {
+    public void bookTicket(int userId, int trainId) {
 
-        if (trainDAO.isChartPrepared(trainId)) {
-            System.out.println("Chart prepared. Booking closed.");
+        // Check if chart is prepared
+        if (ticketDAO.isChartPrepared(trainId)) {
+            System.out.println("Chart already prepared. Booking closed.");
             return;
         }
 
-        int[] seats = trainDAO.getSeats(trainId);
+        Train train = trainDAO.getTrainById(trainId);
 
-        if (seats[0] > 0) {
-            trainDAO.reduceSeat(trainId, "berth");
-            ticketDAO.bookTicket(userId, trainId, "CONFIRMED");
-            System.out.println("Ticket CONFIRMED");
-        }
-        else if (seats[1] > 0) {
-            trainDAO.reduceSeat(trainId, "rac");
-            ticketDAO.bookTicket(userId, trainId, "RAC");
-            System.out.println("Ticket RAC");
-        }
-        else if (seats[2] > 0) {
-            trainDAO.reduceSeat(trainId, "wl");
-            ticketDAO.bookTicket(userId, trainId, "WAITING");
-            System.out.println("Ticket WAITING");
-        }
-        else {
-            System.out.println("No seats available");
-        }
-    }
-
-    public void cancel(int pnr) {
-        int trainId = ticketDAO.cancelTicket(pnr);
-
-        int rac = ticketDAO.getNextRAC(trainId);
-        if (rac != -1) {
-            ticketDAO.updateStatus(rac, "CONFIRMED");
-
-            int wl = ticketDAO.getNextWL(trainId);
-            if (wl != -1)
-                ticketDAO.updateStatus(wl, "RAC");
+        if (train == null) {
+            System.out.println("Invalid Train ID");
+            return;
         }
 
-        System.out.println("Ticket Cancelled & Auto-Promoted");
-    }
+        if (train.getBerth() > 0) {
+            ticketDAO.updateSeatCount(trainId, "berth");
+            ticketDAO.bookTicket(new Ticket(userId, trainId, "CONFIRMED"));
+            System.out.println("✅ Ticket CONFIRMED");
 
-    public void prepareChart(int trainId) {
-        trainDAO.prepareChart(trainId);
-        System.out.println("Chart Prepared");
+        } else if (train.getRac() > 0) {
+            ticketDAO.updateSeatCount(trainId, "rac");
+            ticketDAO.bookTicket(new Ticket(userId, trainId, "RAC"));
+            System.out.println("🟡 Ticket in RAC");
+
+        } else if (train.getWl() > 0) {
+            ticketDAO.updateSeatCount(trainId, "wl");
+            ticketDAO.bookTicket(new Ticket(userId, trainId, "WAITING"));
+            System.out.println("🔴 Ticket in WAITING LIST");
+
+        } else {
+            System.out.println("❌ No seats available");
+        }
     }
 }
