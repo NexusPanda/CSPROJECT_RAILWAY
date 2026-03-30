@@ -13,8 +13,6 @@ public class BookingService {
     private TrainDAO trainDAO = new TrainDAOImpl();
 
     public void bookTicket(int userId, int trainId) {
-
-        // Check if chart is prepared
         if (ticketDAO.isChartPrepared(trainId)) {
             System.out.println("Chart already prepared. Booking closed.");
             return;
